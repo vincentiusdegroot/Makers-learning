@@ -947,7 +947,7 @@
   const depot = ixy(1, 1);
   const player = {
     x: depot.x, y: depot.y + 46, angle: 0, veh: null,
-    cash: 0, wanted: 0, delivered: 0, heat: 0, bustHold: 0,
+    cash: 0, wanted: 0, delivered: 0, heat: 0, bustHold: 0, streak: 0,
   };
   const playerX = () => player.veh ? player.veh.x : player.x;
   const playerY = () => player.veh ? player.veh.y : player.y;
@@ -1184,9 +1184,15 @@
       job.stage = 'dropoff';
       toast(`${job.cargo} aboard`, 'good');
     } else if (job.stage === 'dropoff' && dist(px, py, job.dx, job.dy) < 32) {
-      player.cash += job.fare;
+      player.streak++;
+      let fare = job.fare;
+      if (player.streak >= 3) {
+        fare = Math.round(fare * 1.2);
+        toast(`Streak bonus! +20% — €${fare}`, 'good');
+      }
+      player.cash += fare;
       player.delivered++;
-      toast(`Delivered — €${job.fare}`, 'good');
+      toast(`Delivered — €${fare}`, 'good');
       if (player.cash >= 250) {
         districtCleared();
       } else {
