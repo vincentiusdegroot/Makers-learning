@@ -953,7 +953,7 @@
   const playerY = () => player.veh ? player.veh.y : player.y;
 
   const keys = Object.create(null);
-  let state = 'title';   // title | play | busted
+  let state = 'title';   // title | play | busted | cleared
   let job = null;
   const toasts = [];
 
@@ -1013,6 +1013,11 @@
     state = 'busted';
     document.getElementById('bustedCard').hidden = false;
     document.getElementById('againBtn').focus();
+  }
+
+  function districtCleared() {
+    state = 'cleared';
+    toast(`District cleared! You earned €${player.cash}`, 'good');
   }
 
   // --- vehicle physics: forward velocity + speed-scaled steering ---
@@ -1182,7 +1187,11 @@
       player.cash += job.fare;
       player.delivered++;
       toast(`Delivered — €${job.fare}`, 'good');
-      newJob();
+      if (player.cash >= 250) {
+        districtCleared();
+      } else {
+        newJob();
+      }
     }
   }
 
@@ -1516,6 +1525,7 @@
     if (k === 'enter') {
       if (state === 'title') startGame();
       else if (state === 'busted') resume();
+      else if (state === 'cleared') returnToTitle();
       return;
     }
     if (state !== 'play') return;
@@ -1536,6 +1546,12 @@
   function resume() {
     document.getElementById('bustedCard').hidden = true;
     state = 'play';
+    prev = performance.now();
+  }
+
+  function returnToTitle() {
+    document.getElementById('titleCard').hidden = false;
+    state = 'title';
     prev = performance.now();
   }
 
