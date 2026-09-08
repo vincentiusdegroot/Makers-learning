@@ -1372,36 +1372,36 @@
     renderMini();
   }
 
-  function renderMini() {
-    const k = MINI / WORLD;
-    mini.setTransform(1, 0, 0, 1, 0, 0);
-    mini.clearRect(0, 0, MINI, MINI);
-    mini.drawImage(miniBase, 0, 0);
-
-    if (job) {
-      const jx = (job.stage === 'pickup' ? job.x : job.dx) * k;
-      const jy = (job.stage === 'pickup' ? job.y : job.dy) * k;
-      mini.fillStyle = C.amber;
-      mini.beginPath(); mini.arc(jx, jy, 7, 0, 7); mini.fill();
-      mini.strokeStyle = 'rgba(240,162,46,0.5)';
-      mini.lineWidth = 3;
-      mini.beginPath(); mini.arc(jx, jy, 13 + Math.sin(tick * 0.08) * 3, 0, 7); mini.stroke();
-    }
-
-    mini.fillStyle = C.police;
-    for (const p of police) { mini.beginPath(); mini.arc(p.x * k, p.y * k, 5, 0, 7); mini.fill(); }
-
-    // the courier: a chevron pointing where you face
-    const ang = player.veh ? player.veh.angle : player.angle;
-    mini.save();
-    mini.translate(playerX() * k, playerY() * k);
-    mini.rotate(ang);
-    mini.fillStyle = '#ffffff';
-    mini.beginPath();
-    mini.moveTo(11, 0); mini.lineTo(-7, 7); mini.lineTo(-3, 0); mini.lineTo(-7, -7);
-    mini.closePath(); mini.fill();
-    mini.restore();
-  }
+  // function renderMini() {
+  //   const k = MINI / WORLD;
+  //   mini.setTransform(1, 0, 0, 1, 0, 0);
+  //   mini.clearRect(0, 0, MINI, MINI);
+  //   mini.drawImage(miniBase, 0, 0);
+  //
+  //   if (job) {
+  //     const jx = (job.stage === 'pickup' ? job.x : job.dx) * k;
+  //     const jy = (job.stage === 'pickup' ? job.y : job.dy) * k;
+  //     mini.fillStyle = C.amber;
+  //     mini.beginPath(); mini.arc(jx, jy, 7, 0, 7); mini.fill();
+  //     mini.strokeStyle = 'rgba(240,162,46,0.5)';
+  //     mini.lineWidth = 3;
+  //     mini.beginPath(); mini.arc(jx, jy, 13 + Math.sin(tick * 0.08) * 3, 0, 7); mini.stroke();
+  //   }
+  //
+  //   mini.fillStyle = C.police;
+  //   for (const p of police) { mini.beginPath(); mini.arc(p.x * k, p.y * k, 5, 0, 7); mini.fill(); }
+  //
+  //   // the courier: a chevron pointing where you face
+  //   const ang = player.veh ? player.veh.angle : player.angle;
+  //   mini.save();
+  //   mini.translate(playerX() * k, playerY() * k);
+  //   mini.rotate(ang);
+  //   mini.fillStyle = '#ffffff';
+  //   mini.beginPath();
+  //   mini.moveTo(11, 0); mini.lineTo(-7, 7); mini.lineTo(-3, 0); mini.lineTo(-7, -7);
+  //   mini.closePath(); mini.fill();
+  //   mini.restore();
+  // }
 
   // ============================================================
   // HUD
