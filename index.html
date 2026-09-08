@@ -1513,10 +1513,6 @@
     if (BLOCK_KEYS.has(k)) e.preventDefault();
     keys[k] = true;
 
-    if (k === 'w') {
-      toast('Warning — W key pressed', 'bad');
-    }
-
     if (k === 'enter') {
       if (state === 'title') startGame();
       else if (state === 'busted') resume();
