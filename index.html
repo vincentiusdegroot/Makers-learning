@@ -353,6 +353,7 @@
       <div class="cash" id="cash">&euro;0</div>
       <div class="lbl" style="margin-top:11px">Enforcement</div>
       <div class="stars" id="stars"></div>
+      <div class="heat-bar" id="heatBar" style="width: 0%; margin-top: 8px; height: 3px; background: var(--alert); border-radius: 2px;"></div>
       <div class="divider"></div>
       <div class="job-what" id="jobWhat">Awaiting job</div>
       <div class="job-meta" id="jobMeta"></div>
@@ -1418,6 +1419,7 @@
   const el = {
     cash: document.getElementById('cash'),
     stars: document.getElementById('stars'),
+    heatBar: document.getElementById('heatBar'),
     what: document.getElementById('jobWhat'),
     meta: document.getElementById('jobMeta'),
     street: document.getElementById('street'),
@@ -1455,6 +1457,7 @@
       starEls.forEach((s, i) => s.classList.toggle('on', i < player.wanted));
       last.wanted = player.wanted;
     }
+    el.heatBar.style.width = Math.min(100, player.heat / 10) + '%';
 
     let what = 'Awaiting job', meta = '';
     if (job) {
