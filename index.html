@@ -947,7 +947,7 @@
   const depot = ixy(1, 1);
   const player = {
     x: depot.x, y: depot.y + 46, angle: 0, veh: null,
-    cash: 0, wanted: 0, delivered: 0, heat: 0, bustHold: 0,
+    cash: 0, wanted: 0, delivered: 0, heat: 0, bustHold: 0, boost: 0,
   };
   const playerX = () => player.veh ? player.veh.x : player.x;
   const playerY = () => player.veh ? player.veh.y : player.y;
@@ -988,6 +988,26 @@
       fare: Math.round(18 + d * 0.055),
       cargo: pick(['bloembollen', 'fietsonderdelen', 'kaaswiel', 'sluisonderdeel', 'bakkerij-order', 'boekenpakket']),
     };
+  }
+
+  const BOOST_DURATION = 240;   // ticks of speed boost per pickup
+  const boosts = [];
+
+  function spawnBoost() {
+    const p = roadPoint();
+    boosts.push({ x: p.x, y: p.y });
+  }
+
+  function checkBoosts() {
+    for (let i = boosts.length - 1; i >= 0; i--) {
+      const b = boosts[i];
+      if (dist(playerX(), playerY(), b.x, b.y) < 26) {
+        boosts.splice(i, 1);
+        player.boost = BOOST_DURATION;
+        toast('Speed boost!', 'good');
+        spawnBoost();
+      }
+    }
   }
 
   function crime(stars) {
@@ -1033,8 +1053,10 @@
 
     if (brake) v.vel *= Math.pow(0.86, dt);
     v.vel *= Math.pow(0.978, dt);
-    v.vel = clamp(v.vel, -v.max * 0.42, v.max);
+    const topSpeed = player.boost > 0 ? v.max * 1.6 : v.max;
+    v.vel = clamp(v.vel, -topSpeed * 0.42, topSpeed);
     if (Math.abs(v.vel) < 0.02) v.vel = 0;
+    if (player.boost > 0) player.boost -= dt;
 
     const grip = clamp(Math.abs(v.vel) / 2.1, 0, 1) * (brake ? 1.5 : 1);
     const turn = 0.052 * grip * dt * Math.sign(v.vel || 1);
@@ -1336,6 +1358,22 @@
     g.restore();
   }
 
+  function drawBoost(g, b, t) {
+    const pulse = 1 + Math.sin(t * 0.12) * 0.15;
+    g.save();
+    g.translate(b.x, b.y);
+    g.fillStyle = 'rgba(56,189,248,0.18)';
+    g.beginPath(); g.arc(0, 0, 20 * pulse, 0, 7); g.fill();
+    g.strokeStyle = '#38bdf8';
+    g.lineWidth = 3;
+    g.beginPath(); g.arc(0, 0, 14, 0, 7); g.stroke();
+    g.fillStyle = '#38bdf8';
+    g.beginPath();
+    g.moveTo(-3, -10); g.lineTo(4, -2); g.lineTo(0, -2); g.lineTo(3, 10); g.lineTo(-4, 1); g.lineTo(0, 1);
+    g.closePath(); g.fill();
+    g.restore();
+  }
+
   let tick = 0;
 
   function render() {
@@ -1363,6 +1401,8 @@
       if (job.stage === 'pickup') drawMarker(ctx, job.x, job.y, tick, 'pickup');
       else drawMarker(ctx, job.dx, job.dy, tick, 'drop');
     }
+
+    for (const b of boosts) drawBoost(ctx, b, tick);
 
     const pad = 90;
     const vis = (x, y) => x > vx - pad && x < vx + vw + pad && y > vy - pad && y < vy + vh + pad;
@@ -1504,6 +1544,7 @@
       updatePolice(dt);
       checkImpacts(dt);
       checkJob();
+      checkBoosts();
       for (const t of toasts) t.t -= dt;
     }
 
@@ -1565,6 +1606,7 @@
   for (let i = 0; i < 14; i++) spawnTraffic('car');
   for (let i = 0; i < 16; i++) spawnTraffic('bike');
   for (let i = 0; i < 30; i++) peds.push(spawnPed(null));
+  for (let i = 0; i < 5; i++) spawnBoost();
   newJob();
   resize();
   requestAnimationFrame(frame);
