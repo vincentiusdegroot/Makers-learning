@@ -1001,6 +1001,7 @@
     player.cash -= lost;
     player.wanted = 0;
     player.heat = 0;
+    player.streak = 0;
     police.length = 0;
     player.veh = null;
     player.x = depot.x; player.y = depot.y + 46;
@@ -1189,10 +1190,11 @@
       if (player.streak >= 3) {
         fare = Math.round(fare * 1.2);
         toast(`Streak bonus! +20% — €${fare}`, 'good');
+      } else {
+        toast(`Delivered — €${fare}`, 'good');
       }
       player.cash += fare;
       player.delivered++;
-      toast(`Delivered — €${fare}`, 'good');
       if (player.cash >= 250) {
         districtCleared();
       } else {
@@ -1542,6 +1544,10 @@
   window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 
   function startGame() {
+    player.cash = 0;
+    player.delivered = 0;
+    player.streak = 0;
+    newJob();
     document.getElementById('titleCard').hidden = true;
     state = 'play';
     prev = performance.now();
