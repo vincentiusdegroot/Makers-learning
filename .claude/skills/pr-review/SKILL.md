@@ -23,4 +23,7 @@ You are reviewing a pull request. Do the following, in order:
 4. **A second angle.** Re-read the diff as if you were the person on-call
    this weekend. What would you want to know before approving?
 
+5. **Actionable feedback.** List any specific questions or concerns you have about
+   the code, and any suggestions for improvement. Add all to the PR review comments.
+
 Keep each section short. Quote specific lines or files where relevant.
